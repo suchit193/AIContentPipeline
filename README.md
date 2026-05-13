@@ -7,11 +7,11 @@ Features-
 Authentication System
 - User Signup
 - User Login
-- Logout
-- Session Management
+
   
 Workspace Management
 - Create Workspace
+- logout
 - View User Workspaces
 - Open Workspace Dashboard
 
@@ -75,6 +75,7 @@ Project Architecture
 The project follows layered MVC architecture.
 
 text- 
+
 Controller Layer
 ↓
 Service Layer
