@@ -64,7 +64,7 @@ placeholder="Enter Brand Name">
 
 <textarea class="form-control mb-3"
 id="brandDetails"
-placeholder="Describe your brand, product or startup"></textarea>
+placeholder="Describe your brand"></textarea>
 
 <!-- TARGET AUDIENCE -->
 
@@ -73,7 +73,7 @@ placeholder="Describe your brand, product or startup"></textarea>
 <input type="text"
 class="form-control mb-3"
 id="audience"
-placeholder="Startup founders, students, marketers...">
+placeholder="Startup founders, marketers...">
 
 <!-- TONE -->
 
@@ -90,7 +90,7 @@ placeholder="Professional/Funny/Casual">
 
 <textarea class="form-control mb-3"
 id="goal"
-placeholder="Promote AI startup"></textarea>
+placeholder="Promote product launch"></textarea>
 
 <!-- BUTTONS -->
 
@@ -119,11 +119,15 @@ Generate Image
 <div id="loading"
 style="display:none;">
 
-<h4>
+<div class="spinner-border text-light">
+
+</div>
+
+<p class="mt-2">
 
 Generating AI Content...
 
-</h4>
+</p>
 
 </div>
 
@@ -139,7 +143,7 @@ id="outputBox"></textarea>
 
 </div>
 
-<!-- IMAGE SECTION -->
+<!-- IMAGE -->
 
 <hr>
 
@@ -181,6 +185,40 @@ class="btn btn-primary"
 onclick="scheduleContent()">
 
 Schedule Post
+
+</button>
+
+<!-- EXPORT BUTTONS -->
+
+<button type="button"
+class="btn btn-danger"
+onclick="exportPDF()">
+
+Export PDF
+
+</button>
+
+<button type="button"
+class="btn btn-secondary"
+onclick="exportMarkdown()">
+
+Export Markdown
+
+</button>
+
+<button type="button"
+class="btn btn-dark"
+onclick="exportJSON()">
+
+Export JSON
+
+</button>
+
+<button type="button"
+class="btn btn-success"
+onclick="exportZIP()">
+
+Export ZIP
 
 </button>
 
@@ -256,10 +294,20 @@ data-bs-dismiss="modal"></button>
 
 </div>
 
-<!-- BOOTSTRAP JS -->
+<!-- BOOTSTRAP -->
 
 <script src=
 "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JSZIP -->
+
+<script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- JSPDF -->
+
+<script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 
@@ -402,7 +450,7 @@ async function generateImage() {
             "block";
 }
 
-// PREVIEW CONTENT
+// PREVIEW
 
 function previewContent() {
 
@@ -426,7 +474,7 @@ function previewContent() {
     modal.show();
 }
 
-// SCHEDULE CONTENT
+// SCHEDULE
 
 function scheduleContent() {
 
@@ -449,6 +497,140 @@ function scheduleContent() {
 
         + scheduleTime
     );
+}
+
+// REAL PDF EXPORT
+
+async function exportPDF() {
+
+    const { jsPDF } =
+            window.jspdf;
+
+    let doc =
+            new jsPDF();
+
+    let content =
+
+        document.getElementById(
+                "outputBox").value;
+
+    let lines =
+
+        doc.splitTextToSize(
+                content,
+                180);
+
+    doc.text(lines, 10, 10);
+
+    doc.save(
+            "generated-content.pdf");
+}
+
+// EXPORT MARKDOWN
+
+function exportMarkdown() {
+
+    let content =
+
+        document.getElementById(
+                "outputBox").value;
+
+    let blob =
+
+        new Blob(
+
+            [content],
+
+            {type:"text/markdown"}
+        );
+
+    let link =
+        document.createElement("a");
+
+    link.href =
+        window.URL.createObjectURL(blob);
+
+    link.download =
+        "generated-content.md";
+
+    link.click();
+}
+
+// EXPORT JSON
+
+function exportJSON() {
+
+    let content =
+
+        document.getElementById(
+                "outputBox").value;
+
+    let data = {
+
+        generatedContent:
+            content
+    };
+
+    let blob =
+
+        new Blob(
+
+            [JSON.stringify(
+                    data,
+                    null,
+                    2)],
+
+            {type:"application/json"}
+        );
+
+    let link =
+        document.createElement("a");
+
+    link.href =
+        window.URL.createObjectURL(blob);
+
+    link.download =
+        "generated-content.json";
+
+    link.click();
+}
+
+// EXPORT ZIP
+
+async function exportZIP() {
+
+    let content =
+
+        document.getElementById(
+                "outputBox").value;
+
+    let zip =
+        new JSZip();
+
+    zip.file(
+
+        "generated-content.txt",
+
+        content
+    );
+
+    let blob =
+
+        await zip.generateAsync({
+
+            type:"blob"
+        });
+
+    let link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download =
+        "generated-content.zip";
+
+    link.click();
 }
 
 </script>
